@@ -50,6 +50,31 @@ class AuthController extends Controller
         return response($response, 201);
     }
 
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email|max:191',
+            'password' => 'required|string'
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+
+        if (!$user || !Hash::check($data['password'], $user->password)) {
+            return response([
+                'message' => 'Invalid Credentials',
+                401
+            ]);
+        }
+        $token = $user->createToken('foundProjectTokenLogin')->plainTextToken;
+
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
+
+        return response($response, 200);
+    }
+
 
     /**
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
