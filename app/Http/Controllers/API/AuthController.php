@@ -43,10 +43,22 @@ class AuthController extends Controller
         $token = $user->createToken('foundProjectToken')->plainTextToken;
 
         $response = [
-          'user' => $user,
-          'token' => $token
+            'user' => $user,
+            'token' => $token
         ];
 
-        return response($response,201);
+        return response($response, 201);
+    }
+
+
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function logout()
+    {
+        auth()->user()->tokens()->delete();
+        return response([
+            'message' => 'Logged Out Successfully.'
+        ]);
     }
 }
